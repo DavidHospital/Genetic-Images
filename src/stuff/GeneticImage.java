@@ -1,8 +1,10 @@
 package stuff;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class GeneticImage {
 
@@ -10,40 +12,63 @@ public class GeneticImage {
 	
 	ArrayList<Triangle> triangles;
 	
-	public GeneticImage() {
+	public GeneticImage(int width, int height) {
 		triangles = new ArrayList<Triangle>();
 		
-		int width = 200;
-		int height = 200;
-		
-		for (int i = 0; i < 100; i ++) {
-			triangles.add(new Triangle(
-					(int)(width * Math.random()),
-					(int)(height * Math.random()),
-					(int)(width * Math.random()),
-					(int)(height * Math.random()),
-					(int)(width * Math.random()),
-					(int)(height * Math.random()),
-					Color.getHSBColor((float)Math.random(), (float)Math.random(), (float)Math.random())
-					));
+		for (int i = 0; i < 50; i ++) {
+			triangles.add(Triangle.RandomTriangle(width, height));
 		}
 		
-		img = new BufferedImage(200, 200, BufferedImage.TYPE_INT_ARGB);
+		img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 	}
 	
 	public void render() {
-		img.getGraphics().dispose();
-		for (Triangle t : triangles) {
-			int[] dxs = { 5 - (int)(10 * Math.random()), 5 - (int)(10 * Math.random()), 5 - (int)(10 * Math.random()) };
-			int[] dys = { 5 - (int)(10 * Math.random()), 5 - (int)(10 * Math.random()), 5 - (int)(10 * Math.random()) };
-			t.changeXY(dxs, dys);
-		}
+		Graphics imgG = img.getGraphics();
+		imgG.setColor(Color.WHITE);
+		imgG.fillRect(0, 0, img.getWidth(), img.getHeight());
 		for(Triangle t : triangles) {
-			t.draw(img.getGraphics());
+			t.draw(imgG);
 		}
+	}
+	
+	public void mutate() {
+		Random r = new Random();
+		int index = r.nextInt(triangles.size());
+		
+		if (r.nextDouble() < 0.05) {
+			triangles.set(index, Triangle.RandomTriangle(img.getWidth(), img.getHeight()));
+		}
+		
+		if (r.nextBoolean()) {
+			triangles.get(index).randomXY();
+		} else {
+			triangles.get(index).randomColor();
+		}
+	}
+	
+	public long fitness(BufferedImage img) {
+		int score = 0;
+		for (int i = 0; i < this.img.getWidth(); i++) {
+			for (int j = 0; j < this.img.getHeight(); j++) {
+				Color c1 = new Color(this.img.getRGB(i, j));
+				Color c2 = new Color(img.getRGB(i, j));
+				score += (int)Math.abs(c1.getRed() - c2.getRed());
+				score += (int)Math.abs(c1.getGreen() - c2.getGreen());
+				score += (int)Math.abs(c1.getBlue() - c2.getBlue());
+			}
+		}
+		return score;
 	}
 	
 	public BufferedImage getImage() {
 		return img;
+	}
+	
+	public GeneticImage clone() {
+		GeneticImage result = new GeneticImage(img.getWidth(), img.getHeight());
+		for (int i = 0; i < this.triangles.size(); i ++) {
+			result.triangles.set(i, this.triangles.get(i).clone());
+		}
+		return result;
 	}
 }

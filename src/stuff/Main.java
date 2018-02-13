@@ -1,11 +1,14 @@
+package stuff;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-
-import stuff.GeneticImage;
 
 @SuppressWarnings("serial")
 public class Main extends JFrame  {
@@ -13,13 +16,15 @@ public class Main extends JFrame  {
 	private boolean isRunning = true;
 	private int fps = 60;
 	private int windowWidth = 800;
-	private int windowHeight = 600;
+	private int windowHeight = 800;
 	
 	private BufferedImage backBuffer;
 	private Insets insets;
 	
 	
+	BufferedImage img;
 	GeneticImage test;
+	long bestScore;
 	
 	private Main() {
         setFocusable(true);
@@ -63,18 +68,36 @@ public class Main extends JFrame  {
 		
 		backBuffer = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
 		
-		
-		test = new GeneticImage();
-
+		try {
+			img = ImageIO.read(new File("res/test1.jpg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		test = new GeneticImage(img.getWidth(), img.getHeight());
+		bestScore = test.fitness(img);
 	}
 	
 	private void render() {		
 		Graphics g = getGraphics();
 		Graphics bgg = backBuffer.getGraphics();
 		
+		bgg.setColor(Color.white);
+		bgg.fillRect(0, 0, windowWidth, windowHeight);
+		
+		GeneticImage test2 = test.clone();
+		test2.mutate();
+		test2.render();
+		long score = test2.fitness(img);
+		
+		if (score < bestScore) {
+			bestScore = score;
+			test = test2;
+		}
+				
 		test.render();
-		BufferedImage img = test.getImage();
-		bgg.drawImage(img, 0, 0, 200, 200, null);
+		bgg.drawImage(test.getImage(), 0, 0, img.getWidth(), img.getHeight(), null);
+		bgg.drawImage(test2.getImage(), 0, img.getHeight(), img.getWidth(), img.getHeight(), null);
+		bgg.drawImage(img, img.getWidth(), 0, img.getWidth(), img.getHeight(), null);
 		
 		g.drawImage(backBuffer, insets.left, insets.top, this);
 	}
