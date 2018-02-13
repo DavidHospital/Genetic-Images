@@ -44,7 +44,7 @@ public class GeneticImage {
 			if (shapeType == SHAPE_TRIANGLES) {
 				shapes.add(Triangle.RandomTriangle());
 			} else if (shapeType == SHAPE_CIRCLES) {
-				shapes.add(Triangle.RandomCircle());
+				shapes.add(Triangle.ClearCircle());
 			}
 		}
 	}

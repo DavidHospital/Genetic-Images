@@ -53,7 +53,7 @@ public class Circle extends Shape {
 	private void randomXYR(Random r) {
 		x = r.nextDouble();
 		y = r.nextDouble();
-		radius = r.nextDouble() * 0.5;
+		radius = r.nextDouble() * 0.25;
 	}
 	
 	private void changeXY(Random rand) {

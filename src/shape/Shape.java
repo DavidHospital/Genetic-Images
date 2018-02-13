@@ -51,7 +51,7 @@ public abstract class Shape {
 		Circle circle = new Circle(
 				r.nextDouble(),
 				r.nextDouble(),
-				r.nextDouble() * 0.5,
+				r.nextDouble() * 0.25,
 				r.nextFloat(),
 				r.nextFloat(),
 				r.nextFloat(),
@@ -65,7 +65,7 @@ public abstract class Shape {
 		Circle circle = new Circle(
 				r.nextDouble(),
 				r.nextDouble(),
-				r.nextDouble() * 0.5,
+				r.nextDouble() * 0.25,
 				0.0f,
 				0.0f,
 				0.0f,
