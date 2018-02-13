@@ -1,4 +1,4 @@
-package stuff;
+package main;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 public class Main extends JFrame  {
 	
 	private boolean isRunning = true;
-	private int fps = 60;
+	private int fps = 1000;
 	private int windowWidth = 800;
 	private int windowHeight = 800;
 	
@@ -25,6 +25,7 @@ public class Main extends JFrame  {
 	BufferedImage img;
 	GeneticImage test;
 	long bestScore;
+	long maxScore;
 	
 	private Main() {
         setFocusable(true);
@@ -73,8 +74,9 @@ public class Main extends JFrame  {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		test = new GeneticImage(img.getWidth(), img.getHeight());
+		test = new GeneticImage(img.getWidth(), img.getHeight(), GeneticImage.SHAPE_CIRCLES);
 		bestScore = test.fitness(img);
+		maxScore = GeneticImage.MaxFitness(img);
 	}
 	
 	private void render() {		
@@ -94,6 +96,8 @@ public class Main extends JFrame  {
 			test = test2;
 		}
 				
+		setTitle(String.format("Fitness: %.2f%%", 100.0 - 100.0 * bestScore / maxScore));
+		
 		test.render();
 		bgg.drawImage(test.getImage(), 0, 0, img.getWidth(), img.getHeight(), null);
 		bgg.drawImage(test2.getImage(), 0, img.getHeight(), img.getWidth(), img.getHeight(), null);
